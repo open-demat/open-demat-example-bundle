@@ -1,0 +1,32 @@
+{% extends 'emails/_base.html.twig' %}
+
+{% set title = title|default('Exemple achats - Suivi de votre demande') %}
+{% set preheader = demande.intituleBesoin|default('Votre demande d achat interne a ete mise a jour.') %}
+
+{% block content %}
+Bonjour,
+
+Votre demande d achat interne a ete mise a jour.
+
+Demandeur : {{ demande.demandeur }}
+Service : {{ demande.serviceDemandeur }}
+Besoin : {{ demande.intituleBesoin }}
+Montant estime : {{ demande.montantEstime }} EUR
+Statut : {{ demande.statutTraitement }}
+
+{% if demande.motifCorrection %}
+Correction demandee :
+{{ demande.motifCorrection }}
+{% endif %}
+
+{% if demande.motifRefus %}
+Motif de refus :
+{{ demande.motifRefus }}
+{% endif %}
+
+Lien de suivi :
+{{ url }}
+
+Cordialement,
+Open Demat
+{% endblock %}

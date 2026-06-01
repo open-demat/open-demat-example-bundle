@@ -1,0 +1,27 @@
+{% extends 'emails/_base.html.twig' %}
+
+{% set title = title|default('Exemple achats - Nouvelle tache') %}
+{% set preheader = task.summary|default('Une demande d achat interne est a traiter.') %}
+
+{% block content %}
+Bonjour,
+
+Une demande d achat interne vient de changer d etat.
+
+Demandeur : {{ demande.demandeur }}
+Service : {{ demande.serviceDemandeur }}
+Besoin : {{ demande.intituleBesoin }}
+Montant estime : {{ demande.montantEstime }} EUR
+Statut : {{ demande.statutTraitement }}
+
+{% if motifCorrection is defined and motifCorrection %}
+Motif de correction initial :
+{{ motifCorrection }}
+{% endif %}
+
+Lien de traitement :
+{{ url }}
+
+Cordialement,
+Open Demat
+{% endblock %}

@@ -1,0 +1,15 @@
+{
+  "name": "open-demat/example-bundle",
+  "description": "Open Demat example bundle",
+  "type": "open-demat-bundle",
+  "license": "AGPL-3.0-or-later",
+  "autoload": {
+    "psr-4": {
+      "OpenDemat\\ExampleBundle\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.4",
+    "symfony/framework-bundle": "^7.4"
+  }
+}

@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande d achat #{{ entity.id }}{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .example-view .wrap{display:grid;gap:1rem;grid-template-columns:1fr}
+    @media (min-width: 992px){.example-view .wrap{grid-template-columns:1.35fr .65fr;align-items:start}}
+    .example-view .card{border-radius:18px;border:1px solid #eee;box-shadow:0 10px 22px rgba(0,0,0,.05);overflow:hidden}
+    .example-view .card-header{background:#fff;border-bottom:1px solid #eee;padding:1rem 1.15rem;font-weight:800}
+    .example-view .kv{display:grid;gap:.75rem;grid-template-columns:1fr}
+    @media (min-width: 768px){.example-view .kv{grid-template-columns:1fr 1fr}}
+    .example-view .item{border:1px solid #eee;border-radius:14px;padding:.85rem;background:#fff}
+    .example-view .k{font-size:.82rem;color:#666}.example-view .v{font-weight:700;white-space:pre-wrap}
+    .example-view .btn-act{width:100%;border-radius:14px;padding:.75rem 1rem;font-weight:750}
+    .example-view .action-section{border:1px solid #e9ecef;border-radius:16px;padding:1rem;background:#fff}
+    .example-view .action-section + .action-section{margin-top:1rem}
+  </style>
+{% endblock %}
+
+{% block body %}
+{% set state_labels = {
+  'brouillon': 'Brouillon',
+  'soumise': 'Soumise',
+  'a_corriger': 'A corriger',
+  'validee': 'Validee',
+  'refusee': 'Refusee',
+  'annulee': 'Annulee',
+  'terminee': 'Terminee'
+} %}
+{% set statut = entity.statutTraitement ?: 'brouillon' %}
+
+<div class="container py-5 example-view">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Demande #{{ entity.id }}</h1>
+      <span class="badge text-bg-secondary">{{ state_labels[statut]|default(statut) }}</span>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ path('open_demat_example_demande_achat_index') }}">Retour</a>
+  </div>
+
+  <div class="wrap">
+    <div class="d-flex flex-column gap-3">
+      <div class="card">
+        <div class="card-header">Informations</div>
+        <div class="card-body">
+          <div class="kv">
+            <div class="item"><div class="k">Demandeur</div><div class="v">{{ entity.demandeur }}</div></div>
+            <div class="item"><div class="k">Service</div><div class="v">{{ entity.serviceDemandeur }}</div></div>
+            <div class="item"><div class="k">Besoin</div><div class="v">{{ entity.intituleBesoin }}</div></div>
+            <div class="item"><div class="k">Montant estime</div><div class="v">{{ entity.montantEstime }} EUR</div></div>
+            <div class="item"><div class="k">Type</div><div class="v">{{ entity.typeAchat }}</div></div>
+            <div class="item"><div class="k">Centre de cout</div><div class="v">{{ entity.centreCout }}</div></div>
+            <div class="item"><div class="k">Date besoin</div><div class="v">{{ entity.dateBesoin ? entity.dateBesoin|date('d/m/Y') : '-' }}</div></div>
+            <div class="item"><div class="k">Urgence</div><div class="v">{{ entity.urgence ? 'Oui' : 'Non' }}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Justification</div>
+        <div class="card-body">
+          <p class="mb-0">{{ entity.justification|nl2br }}</p>
+        </div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <div class="card-header">Actions</div>
+        <div class="card-body">
+          {% if statut in ['brouillon', 'a_corriger'] and is_auteur %}
+            <form method="post" action="{{ path('open_demat_example_demande_achat_soumettre', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_soumettre_' ~ entity.id) }}">
+              <button class="btn btn-danger btn-act" type="submit">Soumettre</button>
+            </form>
+          {% endif %}
+
+          {% if statut == 'soumise' and is_granted('ROLE_EXAMPLE_GESTIONNAIRE') %}
+            <form method="post" action="{{ path('open_demat_example_demande_achat_valider', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_valider_' ~ entity.id) }}">
+              <button class="btn btn-success btn-act" type="submit">Valider</button>
+            </form>
+
+            <form method="post" action="{{ path('open_demat_example_demande_achat_demander_correction', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_demander_correction_' ~ entity.id) }}">
+              <label class="form-label fw-bold">Correction demandee</label>
+              <textarea class="form-control mb-3" name="motif_correction" rows="3"></textarea>
+              {% for key, label in correctable_fields %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="champs_a_corriger[]" value="{{ key }}" id="field_{{ key }}">
+                  <label class="form-check-label" for="field_{{ key }}">{{ label }}</label>
+                </div>
+              {% endfor %}
+              <button class="btn btn-warning btn-act mt-3" type="submit">Demander correction</button>
+            </form>
+
+            <form method="post" action="{{ path('open_demat_example_demande_achat_refuser', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_refuser_definitivement_' ~ entity.id) }}">
+              <label class="form-label fw-bold">Motif de refus</label>
+              <textarea class="form-control mb-3" name="motif_refus" rows="3"></textarea>
+              <button class="btn btn-outline-danger btn-act" type="submit">Refuser</button>
+            </form>
+          {% endif %}
+
+          {% if statut in ['brouillon', 'soumise', 'a_corriger'] and is_auteur %}
+            <form method="post" action="{{ path('open_demat_example_demande_achat_annuler', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_annuler_' ~ entity.id) }}">
+              <button class="btn btn-outline-secondary btn-act" type="submit">Annuler</button>
+            </form>
+          {% endif %}
+
+          {% if statut == 'validee' and is_granted('ROLE_EXAMPLE_GESTIONNAIRE') %}
+            <form method="post" action="{{ path('open_demat_example_demande_achat_terminer', {id: entity.id}) }}" class="action-section">
+              <input type="hidden" name="_token" value="{{ csrf_token('example_demande_achat_terminer_' ~ entity.id) }}">
+              <button class="btn btn-primary btn-act" type="submit">Terminer</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

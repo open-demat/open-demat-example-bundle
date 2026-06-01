@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle demande d achat{% endblock %}
+
+{% block body %}
+<div class="container py-5" style="max-width: 980px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Nouvelle demande d achat</h1>
+      <p class="text-muted mb-0">La demande sera soumise automatiquement au gestionnaire.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ path('open_demat_example_demande_achat_index') }}">Retour</a>
+  </div>
+
+  <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+    <div class="card-body p-4">
+      {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <a class="btn btn-outline-secondary" href="{{ path('open_demat_example_demande_achat_index') }}">Annuler</a>
+          <button class="btn btn-danger" type="submit">Enregistrer et soumettre</button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+{% endblock %}
