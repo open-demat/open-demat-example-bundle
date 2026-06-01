@@ -42,6 +42,7 @@ class ExampleExtension extends ConfigurableExtension implements PrependExtension
                 'role_hierarchy' => [
                     'ROLE_EXAMPLE_GESTIONNAIRE' => ['ROLE_USER'],
                     'ROLE_EXAMPLE_POWERUSER' => ['ROLE_EXAMPLE_GESTIONNAIRE'],
+                    'ROLE_EXAMPLE_ADMIN' => ['ROLE_EXAMPLE_POWERUSER'],
                 ],
             ]);
         }

@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Achats internes - Administration{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .example-admin .admin-card{
+      border-radius:18px;
+      border:1px solid #eee;
+      box-shadow:0 10px 22px rgba(0,0,0,.05);
+      height:100%;
+    }
+    .example-admin .admin-btn{border-radius:12px;font-weight:700}
+    .example-admin .stat-k{font-size:.86rem;color:#666;font-weight:650}
+    .example-admin .stat-v{font-size:1.55rem;font-weight:900}
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4 py-md-5 example-admin">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Achats internes - Administration</h1>
+      <div class="text-muted">Pilotage du bundle example Open Demat.</div>
+    </div>
+
+    <a href="{{ path('open_demat_example_demande_achat_index') }}" class="btn btn-outline-secondary admin-btn">
+      Retour
+    </a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="card admin-card"><div class="card-body"><div class="stat-k">Total</div><div class="stat-v">{{ stats.total }}</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card admin-card"><div class="card-body"><div class="stat-k">A traiter</div><div class="stat-v">{{ stats.soumise }}</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card admin-card"><div class="card-body"><div class="stat-k">Corrections</div><div class="stat-v">{{ stats.a_corriger }}</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card admin-card"><div class="card-body"><div class="stat-k">Cloturees</div><div class="stat-v">{{ stats.validee + stats.terminee }}</div></div></div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card admin-card">
+        <div class="card-body d-flex flex-column">
+          <h2 class="h5 fw-bold mb-2">Demandes d'achat</h2>
+          <p class="text-muted mb-4">
+            Consulter toutes les demandes, traiter les dossiers soumis et suivre les corrections.
+          </p>
+          <div class="mt-auto">
+            <a href="{{ path('open_demat_example_demande_achat_index') }}" class="btn btn-primary admin-btn">
+              Acceder
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card admin-card">
+        <div class="card-body d-flex flex-column">
+          <h2 class="h5 fw-bold mb-2">Utilisateurs Example</h2>
+          <p class="text-muted mb-4">
+            Gerer les comptes habilites a traiter les demandes d achat du bundle example.
+          </p>
+          <div class="mt-auto">
+            <a href="{{ path('open_demat_example_admin_user_list') }}" class="btn btn-primary admin-btn">
+              Acceder
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card admin-card">
+        <div class="card-body d-flex flex-column">
+          <h2 class="h5 fw-bold mb-2">Documentation formulaire</h2>
+          <p class="text-muted mb-4">
+            Mettre a jour le PDF de documentation affiche aux demandeurs dans le formulaire.
+          </p>
+          <div class="mt-auto">
+            <a href="{{ path('open_demat_example_admin_static_document_list') }}" class="btn btn-primary admin-btn">
+              Acceder
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

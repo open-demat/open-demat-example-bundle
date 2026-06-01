@@ -61,6 +61,12 @@
         <i class="bx bx-plus" aria-hidden="true"></i>
         Nouvelle demande
       </a>
+      {% if is_granted('ROLE_EXAMPLE_POWERUSER') %}
+        <a class="btn btn-outline-danger btn-main ms-2" href="{{ path('open_demat_example_admin_hub') }}">
+          <i class="bx bx-cog" aria-hidden="true"></i>
+          Administration
+        </a>
+      {% endif %}
     </div>
   </div>
 

@@ -15,7 +15,42 @@
   <div class="card border-0 shadow-sm" style="border-radius: 18px;">
     <div class="card-body p-4">
       {{ form_start(form) }}
-        {{ form_widget(form) }}
+        {% if documentation %}
+          <div class="alert alert-info d-flex justify-content-between align-items-center gap-3 mb-4">
+            <div>
+              <div class="fw-semibold">{{ documentation.label }}</div>
+              <div class="small">Consultez la documentation avant de deposer votre demande.</div>
+            </div>
+            <a class="btn btn-outline-primary btn-sm" href="{{ path('open_demat_static_document', {code: documentation.code}) }}" target="_blank" rel="noopener">
+              Ouvrir
+            </a>
+          </div>
+        {% endif %}
+
+        <div class="row g-3">
+          <div class="col-12 col-md-6">{{ form_row(form.demandeur) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.serviceDemandeur) }}</div>
+          <div class="col-12">{{ form_row(form.intituleBesoin) }}</div>
+          <div class="col-12">{{ form_row(form.justification) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.montantEstime) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.typeAchat) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.fournisseurSouhaite) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.centreCout) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.dateBesoin) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.urgence) }}</div>
+          <div class="col-12">{{ form_row(form.attestations) }}</div>
+          <div class="col-12">
+            {% include '_partials/_file_picker.html.twig' with {
+              field: form.pieceJointe,
+              label: 'Piece jointe',
+              help: 'Formats : PDF, JPG, PNG, DOCX, XLSX',
+              max: 1,
+              maxSizeMb: 10,
+              accept: 'application/pdf,image/*,.doc,.docx,.xls,.xlsx,.odt,.ods'
+            } %}
+          </div>
+        </div>
+
         <div class="d-flex justify-content-end gap-2 mt-4">
           <a class="btn btn-outline-secondary" href="{{ path('open_demat_example_demande_achat_index') }}">Annuler</a>
           <button class="btn btn-danger" type="submit">Enregistrer et soumettre</button>

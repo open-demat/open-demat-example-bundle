@@ -4,12 +4,15 @@ namespace OpenDemat\ExampleBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use OpenDemat\Core\Entity\User;
+use OpenDemat\Core\Service\AttachmentService;
+use OpenDemat\Core\Service\StaticDocumentService;
 use OpenDemat\ExampleBundle\Entity\DemandeAchatInterne;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,6 +27,9 @@ use Symfony\Component\Workflow\Registry;
 #[Route('/example/demandes-achat')]
 final class DemandeAchatController extends AbstractController
 {
+    private const PROCESS_NAME = 'EXAMPLE';
+    private const CASE_TYPE = 'EXAMPLE_demande_achat';
+
     #[Route('', name: 'open_demat_example_demande_achat_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function index(EntityManagerInterface $em, Security $security): Response
@@ -67,8 +73,14 @@ final class DemandeAchatController extends AbstractController
 
     #[Route('/nouvelle', name: 'open_demat_example_demande_achat_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $em, Security $security, Registry $workflows): Response
-    {
+    public function new(
+        Request $request,
+        EntityManagerInterface $em,
+        Security $security,
+        AttachmentService $attachments,
+        StaticDocumentService $staticDocuments,
+        Registry $workflows,
+    ): Response {
         $demande = new DemandeAchatInterne();
         $form = $this->createDemandeForm($demande);
         $form->handleRequest($request);
@@ -85,6 +97,18 @@ final class DemandeAchatController extends AbstractController
             $em->persist($demande);
             $em->flush();
 
+            $pieceJointe = $form->get('pieceJointe')->getData();
+            if ($pieceJointe !== null) {
+                $attachments->uploadForCase(
+                    processName: self::PROCESS_NAME,
+                    caseType: self::CASE_TYPE,
+                    caseId: (int) $demande->getId(),
+                    files: [$pieceJointe],
+                    uploadedBy: $demande->getAuteur(),
+                    maxFiles: 10,
+                );
+            }
+
             $workflow = $workflows->get($demande, 'example_demande_achat');
             if ($workflow->can($demande, 'soumettre')) {
                 $workflow->apply($demande, 'soumettre');
@@ -98,12 +122,13 @@ final class DemandeAchatController extends AbstractController
 
         return $this->render('@OpenDemat/example-bundle/src/templates/new.html.twig', [
             'form' => $form->createView(),
+            'documentation' => $staticDocuments->findActiveByCode(ExampleAdminStaticDocumentController::DOCUMENTATION_CODE),
         ]);
     }
 
     #[Route('/{id}', name: 'open_demat_example_demande_achat_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function show(DemandeAchatInterne $demande, Security $security): Response
+    public function show(DemandeAchatInterne $demande, Security $security, AttachmentService $attachments): Response
     {
         $user = $security->getUser();
         $isAuteur = $user instanceof User
@@ -118,6 +143,11 @@ final class DemandeAchatController extends AbstractController
             'entity' => $demande,
             'is_auteur' => $isAuteur,
             'correctable_fields' => $this->getCorrectableFields(),
+            'attachments' => $attachments->listForCase(
+                processName: self::PROCESS_NAME,
+                caseType: self::CASE_TYPE,
+                caseId: (int) $demande->getId(),
+            ),
         ]);
     }
 
@@ -238,6 +268,12 @@ final class DemandeAchatController extends AbstractController
                     'Besoin valide par le service' => 'BESOIN_SERVICE_OK',
                     'Achat conforme aux regles internes' => 'CONFORMITE_OK',
                 ],
+            ])
+            ->add('pieceJointe', FileType::class, [
+                'label' => 'Piece jointe',
+                'mapped' => false,
+                'required' => false,
+                'help' => 'PDF, image ou document bureautique.',
             ])
             ->getForm();
     }

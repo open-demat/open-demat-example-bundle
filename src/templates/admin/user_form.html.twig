@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  {% if is_edit %}Achats internes - Modifier un utilisateur{% else %}Achats internes - Nouvel utilisateur{% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .example-admin-card{border-radius:18px;border:1px solid #eee;box-shadow:0 10px 22px rgba(0,0,0,.05)}
+    .example-admin-btn{border-radius:12px;font-weight:700}
+    .example-admin-form .form-check{padding:.55rem .75rem .55rem 2.25rem;border:1px solid #eee;border-radius:12px;margin-bottom:.5rem;background:#fff}
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4 py-md-5 example-admin-form">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">
+        {% if is_edit %}Modifier un utilisateur{% else %}Creer un utilisateur{% endif %}
+      </h1>
+      <div class="text-muted">
+        {% if is_edit %}Edition du compte #{{ user_entity.id }}{% else %}Creation d un compte habilite Example{% endif %}
+      </div>
+    </div>
+
+    <a href="{{ path('open_demat_example_admin_user_list') }}" class="btn btn-outline-secondary example-admin-btn">
+      Retour utilisateurs
+    </a>
+  </div>
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }} mb-3">{{ message }}</div>
+    {% endfor %}
+  {% endfor %}
+
+  <div class="card example-admin-card">
+    <div class="card-body">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-12 col-md-6">{{ form_row(form.username) }}</div>
+          <div class="col-12 col-md-6">{{ form_row(form.email) }}</div>
+          <div class="col-12">{{ form_row(form.roleExample) }}</div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+          <button type="submit" class="btn btn-success example-admin-btn">
+            {% if is_edit %}Enregistrer{% else %}Creer{% endif %}
+          </button>
+          <a href="{{ path('open_demat_example_admin_user_list') }}" class="btn btn-outline-secondary example-admin-btn">
+            Annuler
+          </a>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+{% endblock %}
