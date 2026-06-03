@@ -7,31 +7,84 @@
   <style>
     .example-home .hero-card,
     .example-home .list-card,
-    .example-home .stat-card{
-      border:1px solid #eee;
-      border-radius:18px;
-      box-shadow:0 .55rem 1.35rem rgba(0,0,0,.07);
-      background:#fff;
-      overflow:hidden;
+    .example-home .stat-card {
+      border: 1px solid #e9ecef;
+      border-radius: 16px;
+      box-shadow: 0 .55rem 1.35rem rgba(33, 37, 41, .06);
+      background: #fff;
+      overflow: hidden;
     }
-    .example-home .hero-card{
-      background:linear-gradient(180deg,#fff,#fafafa);
+
+    .example-home .hero-card {
+      background: linear-gradient(135deg, #fff 0%, #f8fbff 58%, #f7f3ff 100%);
     }
-    .example-home .hero-card .card-body{padding:2rem}
-    .example-home .hero-title{font-weight:850;font-size:clamp(1.45rem,1.1rem + 1.7vw,2.25rem)}
-    .example-home .hero-lead{color:#666;max-width:72ch;margin-inline:auto}
-    .example-home .btn-main{border-radius:12px;font-weight:750}
-    .example-home .stat-card{padding:1rem;height:100%}
-    .example-home .stat-k{font-size:.86rem;color:#666;font-weight:650}
-    .example-home .stat-v{font-size:1.55rem;font-weight:900}
-    .example-home .badge-status{font-weight:800;border:1px solid #eee}
-    .example-home .status-brouillon{background:#fff8e1;color:#664d03}
-    .example-home .status-soumise{background:#fdecef;color:#9f1d2b}
-    .example-home .status-a-corriger{background:#fff8e1;color:#664d03}
-    .example-home .status-validee{background:#eaf6ef;color:#0f5132}
-    .example-home .status-refusee{background:#fdecef;color:#842029}
-    .example-home .status-annulee{background:#f1f3f5;color:#343a40}
-    .example-home .status-terminee{background:#eaf2ff;color:#084298}
+
+    .example-home .hero-card .card-body {
+      padding: 1.65rem;
+    }
+
+    .example-home .example-logo {
+      display: inline-grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: #fff;
+      color: #b42318;
+      box-shadow: inset 0 0 0 1px #f1d4d0, 0 .65rem 1.2rem rgba(180, 35, 24, .14);
+      font-size: 2rem;
+      flex: 0 0 auto;
+    }
+
+    .example-home .example-logo img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .example-home .hero-title {
+      font-weight: 850;
+      font-size: clamp(1.45rem, 1.1rem + 1.7vw, 2.2rem);
+    }
+
+    .example-home .hero-lead {
+      color: #5f6368;
+      max-width: 72ch;
+    }
+
+    .example-home .btn-main {
+      border-radius: 12px;
+      font-weight: 750;
+    }
+
+    .example-home .stat-card {
+      padding: 1rem;
+      height: 100%;
+    }
+
+    .example-home .stat-k {
+      font-size: .86rem;
+      color: #666;
+      font-weight: 650;
+    }
+
+    .example-home .stat-v {
+      font-size: 1.55rem;
+      font-weight: 900;
+    }
+
+    .example-home .badge-status {
+      font-weight: 800;
+      border: 1px solid #eee;
+    }
+
+    .example-home .status-brouillon { background: #fff8e1; color: #664d03; }
+    .example-home .status-soumise { background: #fdecef; color: #9f1d2b; }
+    .example-home .status-a-corriger { background: #fff8e1; color: #664d03; }
+    .example-home .status-validee { background: #eaf6ef; color: #0f5132; }
+    .example-home .status-refusee { background: #fdecef; color: #842029; }
+    .example-home .status-annulee { background: #f1f3f5; color: #343a40; }
+    .example-home .status-terminee { background: #eaf2ff; color: #084298; }
   </style>
 {% endblock %}
 
@@ -39,34 +92,46 @@
 {% set state_labels = {
   'brouillon': 'Brouillon',
   'soumise': 'Soumise',
-  'a_corriger': 'A corriger',
-  'validee': 'Validee',
-  'refusee': 'Refusee',
-  'annulee': 'Annulee',
-  'terminee': 'Terminee'
+  'a_corriger': 'À corriger',
+  'validee': 'Validée',
+  'refusee': 'Refusée',
+  'annulee': 'Annulée',
+  'terminee': 'Terminée'
 } %}
 
 <div class="container py-5 example-home">
   <div class="card hero-card mb-4">
-    <div class="card-body text-center">
-      <h1 class="hero-title">Demandes d achat interne</h1>
-      <p class="hero-lead mb-4">
-        {% if is_global_list %}
-          Consultez et traitez les demandes d achat interne soumises par les services.
-        {% else %}
-          Deposez une demande d achat interne et suivez son avancement.
-        {% endif %}
-      </p>
-      <a class="btn btn-danger btn-main" href="{{ path('open_demat_example_demande_achat_new') }}">
-        <i class="bx bx-plus" aria-hidden="true"></i>
-        Nouvelle demande
-      </a>
-      {% if is_granted('ROLE_EXAMPLE_POWERUSER') %}
-        <a class="btn btn-outline-danger btn-main ms-2" href="{{ path('open_demat_example_admin_hub') }}">
-          <i class="bx bx-cog" aria-hidden="true"></i>
-          Administration
-        </a>
-      {% endif %}
+    <div class="card-body">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
+          <span class="example-logo" aria-hidden="true">
+            <img src="{{ asset('assets/img/open-demat-imgs/example-achats.svg') }}" alt="">
+          </span>
+          <div>
+            <h1 class="hero-title mb-2">Demandes d'achat interne</h1>
+            <p class="hero-lead mb-0">
+              {% if is_global_list %}
+                Consultez et traitez les demandes d'achat interne soumises par les services.
+              {% else %}
+                Déposez une demande d'achat interne et suivez son avancement.
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-danger btn-main" href="{{ path('open_demat_example_demande_achat_new') }}">
+            <i class="bx bx-plus" aria-hidden="true"></i>
+            Nouvelle demande
+          </a>
+          {% if is_granted('ROLE_EXAMPLE_POWERUSER') %}
+            <a class="btn btn-outline-danger btn-main" href="{{ path('open_demat_example_admin_hub') }}">
+              <i class="bx bx-cog" aria-hidden="true"></i>
+              Administration
+            </a>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -77,6 +142,48 @@
     <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-k">Cloturees</div><div class="stat-v">{{ stats.validee + stats.refusee + stats.annulee + stats.terminee }}</div></div></div>
   </div>
 
+  {% include '_partials/_list_table_tools.html.twig' with {
+    uid: 'example_demandes',
+    search_placeholder: 'Rechercher une demande...',
+    filter_label_selector: true,
+    filters: [
+      ['ALL', 'Toutes', 'btn-outline-primary'],
+      ['brouillon', 'Brouillons', 'btn-outline-secondary'],
+      ['soumise', 'Soumises', 'btn-outline-danger'],
+      ['a_corriger', 'À corriger', 'btn-outline-warning'],
+      ['validee', 'Validées', 'btn-outline-success'],
+      ['refusee', 'Refusées', 'btn-outline-dark'],
+      ['annulee', 'Annulées', 'btn-outline-secondary'],
+      ['terminee', 'Terminées', 'btn-outline-info']
+    ],
+    config: {
+      items: '.js-demande-row',
+      emptyState: '#exampleDemandesEmpty',
+      search: {
+        input: '#example_demandes_search',
+        fieldsAttr: 'data-search'
+      },
+      filter: {
+        attr: 'data-status',
+        buttons: '.js-filter-btn',
+        label: '.js-filter-label',
+        countSpans: '.js-count',
+        default: 'ALL'
+      },
+      sort: {
+        headers: '.js-sort',
+        defaultKey: 'id',
+        defaultDir: 'desc'
+      },
+      pagination: {
+        enabled: true,
+        defaultPerPage: 10,
+        scrollOnPageChange: true
+      }
+    },
+    search_id: 'example_demandes_search'
+  } %}
+
   <div class="card list-card">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
       <h2 class="h5 mb-0">Demandes</h2>
@@ -84,28 +191,38 @@
     </div>
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead>
+        <thead class="table-light">
           <tr>
-            <th>#</th>
-            <th>Statut</th>
-            <th>Demandeur</th>
-            <th>Service</th>
-            <th>Besoin</th>
-            <th>Montant</th>
-            <th>Date besoin</th>
-            <th></th>
+            <th class="js-sort" data-sort-key="id" data-sort-type="number" style="width: 90px;">#</th>
+            <th class="js-sort" data-sort-key="statut" data-sort-type="text" style="width: 150px;">Statut</th>
+            <th class="js-sort" data-sort-key="demandeur" data-sort-type="text">Demandeur</th>
+            <th class="js-sort" data-sort-key="service" data-sort-type="text">Service</th>
+            <th class="js-sort" data-sort-key="besoin" data-sort-type="text">Besoin</th>
+            <th class="js-sort text-end" data-sort-key="montant" data-sort-type="number" style="width: 130px;">Montant</th>
+            <th class="js-sort" data-sort-key="date" data-sort-type="date" style="width: 150px;">Date besoin</th>
+            <th class="text-end" style="width: 120px;">Actions</th>
           </tr>
         </thead>
         <tbody>
         {% for demande in demandes %}
           {% set statut = demande.statutTraitement ?: 'brouillon' %}
-          <tr>
+          {% set dateBesoin = demande.dateBesoin ? demande.dateBesoin|date('Y-m-d') : '' %}
+          <tr class="js-demande-row"
+              data-status="{{ statut }}"
+              data-search="{{ demande.id }} {{ state_labels[statut]|default(statut) }} {{ demande.demandeur }} {{ demande.serviceDemandeur }} {{ demande.intituleBesoin }} {{ demande.montantEstime }} {{ dateBesoin }}"
+              data-id="{{ demande.id }}"
+              data-statut="{{ state_labels[statut]|default(statut) }}"
+              data-demandeur="{{ demande.demandeur }}"
+              data-service="{{ demande.serviceDemandeur }}"
+              data-besoin="{{ demande.intituleBesoin }}"
+              data-montant="{{ demande.montantEstime }}"
+              data-date="{{ dateBesoin }}">
             <td>{{ demande.id }}</td>
             <td><span class="badge badge-status status-{{ statut|replace({'_':'-'}) }}">{{ state_labels[statut]|default(statut) }}</span></td>
             <td>{{ demande.demandeur }}</td>
             <td>{{ demande.serviceDemandeur }}</td>
             <td>{{ demande.intituleBesoin }}</td>
-            <td>{{ demande.montantEstime }} EUR</td>
+            <td class="text-end">{{ demande.montantEstime }} EUR</td>
             <td>{{ demande.dateBesoin ? demande.dateBesoin|date('d/m/Y') : '-' }}</td>
             <td class="text-end">
               <a class="btn btn-sm btn-outline-secondary" href="{{ path('open_demat_example_demande_achat_show', {id: demande.id}) }}">Ouvrir</a>
@@ -116,6 +233,9 @@
         {% endfor %}
         </tbody>
       </table>
+    </div>
+    <div id="exampleDemandesEmpty" class="d-none text-center text-muted py-4">
+      Aucune demande ne correspond aux filtres actuels.
     </div>
   </div>
 </div>

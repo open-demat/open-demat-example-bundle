@@ -23,7 +23,7 @@ class ExampleGlobalAppDefinition implements AppDefinitionInterface
 
     public function getIcon(): string
     {
-        return 'bxs-purchase-tag';
+        return 'example-achats.svg';
     }
 
     public function getRoles(): array
