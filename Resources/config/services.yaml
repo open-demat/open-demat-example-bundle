@@ -6,7 +6,7 @@ services:
 
   OpenDemat\ExampleBundle\:
     resource: '../../src/*'
-    exclude: '../../src/{DependencyInjection,ExampleBundle.php}'
+    exclude: '../../src/{DependencyInjection,Tests,tests,ExampleBundle.php}'
 
   OpenDemat\ExampleBundle\Hub\ExampleGlobalAppDefinition:
     tags: ['open_demat.hub.app_definition']

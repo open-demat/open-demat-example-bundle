@@ -38,13 +38,16 @@ final class ExampleAttachmentController extends AbstractController
             }
         });
 
-        $response->headers->set('Content-Type', $document->getMimeType() ?: 'application/octet-stream');
+        // Keep untrusted uploads outside the application's rendering origin.
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Cache-Control', 'private, no-store');
 
         $fileName = (string) ($document->getOriginalName() ?: 'file');
         $response->headers->set(
             'Content-Disposition',
             $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_INLINE,
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $fileName,
                 $this->asciiFallback($fileName)
             )

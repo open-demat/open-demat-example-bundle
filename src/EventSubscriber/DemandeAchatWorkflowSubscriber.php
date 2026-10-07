@@ -271,7 +271,8 @@ class DemandeAchatWorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->mailer->sendToTarget(
+        $this->mailer->sendBundleNotification(
+            self::PROCESS_NAME,
             $target,
             $title,
             '@OpenDemat/example-bundle/src/templates/emails/task_created_simple.html.twig',
@@ -294,7 +295,8 @@ class DemandeAchatWorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->mailer->sendToTarget(
+        $this->mailer->sendBundleNotification(
+            self::PROCESS_NAME,
             $target,
             'Exemple achats - Correction deposee par le demandeur',
             '@OpenDemat/example-bundle/src/templates/emails/task_created_simple.html.twig',
@@ -318,7 +320,8 @@ class DemandeAchatWorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->mailer->sendToTarget(
+        $this->mailer->sendBundleNotification(
+            self::PROCESS_NAME,
             $email,
             $title,
             $template,
